@@ -1,7 +1,7 @@
 const db = require("dotenv").config();
 const nodemailer = require("nodemailer");
 
-module.exports = async function sendEmail(recepient, title, message) {
+module.exports = async function sendEmail(recipient, title, message) {
   // Generate test SMTP service account from ethereal.email
   // Only needed if you don't have a real mail account for testing
   let testAccount = await nodemailer.createTestAccount();
@@ -17,10 +17,10 @@ module.exports = async function sendEmail(recepient, title, message) {
   console.log(process.env.HOST_EMAIL);
   const mailOptions = {
     from: process.env.HOST_EMAIL, // sender address
-    to: recepient, // list of receivers
+    to: recipient, // list of receivers
     subject: `Reminder for ${title}`, // Subject line
     text: message, // plain text body
-    html: "<b>Hello world?</b>", // html body
+    // html: `<b>${message}</b>`, // html body
   };
 
   // send mail with defined transport object

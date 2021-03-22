@@ -3,7 +3,6 @@ const { Events } = require("./events.class");
 const createModel = require("../../models/events.model");
 const hooks = require("./events.hooks");
 const cronMailer = require("./cron-mailer");
-const userModel = require("../../models/users.model");
 module.exports = function (app) {
   const options = {
     Model: createModel(app),

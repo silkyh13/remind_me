@@ -1,6 +1,7 @@
 const cron = require("node-cron");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const sendEmail = require("./sendEmail.js");
+const updateEvent = require("./updateEvent");
 module.exports = (model) => {
   cron.schedule("* * * * *", async () => {
     //matching userId from the events collection to _id of users collection
@@ -16,25 +17,31 @@ module.exports = (model) => {
     ]);
     //send email to anyone that has an event thats 30 mins away
     //loop through events. events is an array of event obj
-    let currentTime = moment(new Date());
 
     let listOfEvents = events.filter((event) => {
-      let baptized = moment(new Date(event.startTime));
-      console.log(
-        event.title,
-        baptized,
-        baptized.diff(currentTime, "minutes"),
-        "hoo"
+      let currentTime = moment(new Date())
+        .tz(event.timeZone)
+        .format("DD/MM/YYYY HH:mm:ss");
+      let baptized = moment(new Date(event.startTime)).format(
+        "DD/MM/YYYY HH:mm:ss"
       );
-      return baptized.diff(currentTime, "minutes") > 0;
-      // return (
-      //   baptized.diff(currentTime, "minutes") <= 30 &&
-      //   baptized.diff(currentTime, "minutes") > 0
-      // );
+
+      let difference = moment(baptized, "DD/MM/YYYY HH:mm:ss").diff(
+        moment(currentTime, "DD/MM/YYYY HH:mm:ss"),
+        "minutes"
+      );
+      // return baptized.diff(currentTime, "minutes") > 0;
+      return !event.sentReminder && difference <= 30 && difference > 0;
     });
+
     for (let i = 0; i < listOfEvents.length; i++) {
       console.log(listOfEvents[i], listOfEvents[i].user[0].email);
-      // sendEmail(listOfEvents[i].user[0].email)
+      updateEvent(model, listOfEvents[i]._id);
+      sendEmail(
+        listOfEvents[i].user[0].email,
+        listOfEvents[i].title,
+        listOfEvents[i].description
+      );
     }
   });
 };

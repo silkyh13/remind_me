@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+import moment from "moment";
+import jstz from "jstz";
+import momentTimezone from "moment-timezone";
 
 export const dateSlice = createSlice({
   name: "date",
   initialState: { value: null },
   reducers: {
     setDate: (state, action) => {
-      console.log("Payload:", action.payload);
+      console.log("Payload:", moment(action.payload));
       state.value = action.payload;
     },
   },

@@ -15,6 +15,8 @@ module.exports = function (app) {
       description: { type: String },
       allDay: { type: Boolean },
       userId: { type: ObjectId },
+      timeZone: { type: String },
+      sentReminder: { type: Boolean },
     },
     {
       timestamps: true,

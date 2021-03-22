@@ -68,16 +68,6 @@ function getUserEvents() {
             _id: new ObjectID(context.params.user._id),
           },
         },
-        // e.g.
-        // {
-        //    $lookup:
-        //    {
-        //      from: <collection to join>,
-        //      localField: <field from the input documents>,
-        //      foreignField: <field from the documents of the "from" collection>,
-        //      as: <output array field>
-        //    }
-        // }
         {
           $lookup: {
             from: "events",

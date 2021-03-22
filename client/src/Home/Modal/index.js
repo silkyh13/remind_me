@@ -44,6 +44,7 @@ const DateModal = () => {
       setStartTime(new Date(date.value).toISOString().slice(0, 16));
       setEndTime(new Date(date.value).toISOString().slice(0, 16));
     }
+    console.log("made it here");
   }, [date]);
 
   useEffect(() => {
@@ -52,7 +53,6 @@ const DateModal = () => {
         moment(new Date(startTime)).add(30, "m").toDate()
       );
       console.log("start time", startTime, "end time", newDate);
-
       setEndTime(newDate);
       dispatch(setDate(startTime));
     }
@@ -140,6 +140,8 @@ const DateModal = () => {
                         endTime,
                         description,
                         userId: user.value._id,
+                        timeZone,
+                        sentReminder: false,
                       })
                       .then((res) => {
                         // Save event to redux
@@ -149,6 +151,7 @@ const DateModal = () => {
                             start: startTime,
                             end: endTime,
                             description,
+                            timeZone,
                           })
                         );
                         dispatch(toggleModal());
