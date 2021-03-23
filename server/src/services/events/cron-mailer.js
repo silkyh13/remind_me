@@ -30,12 +30,17 @@ module.exports = (model) => {
         moment(currentTime, "DD/MM/YYYY HH:mm:ss"),
         "minutes"
       );
-      // return baptized.diff(currentTime, "minutes") > 0;
-      return !event.sentReminder && difference <= 30 && difference > 0;
+
+      return (
+        event.user[0] &&
+        event.user[0].needReminder &&
+        !event.sentReminder &&
+        difference <= 30 &&
+        difference > 0
+      );
     });
 
     for (let i = 0; i < listOfEvents.length; i++) {
-      console.log(listOfEvents[i], listOfEvents[i].user[0].email);
       updateEvent(model, listOfEvents[i]._id);
       sendEmail(
         listOfEvents[i].user[0].email,

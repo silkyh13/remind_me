@@ -14,6 +14,7 @@ module.exports = function (app) {
       first_name: { type: String },
       last_name: { type: String },
       events: [{ type: ObjectId }],
+      needReminder: { type: Boolean },
     },
     {
       timestamps: true,

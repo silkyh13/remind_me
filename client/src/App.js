@@ -16,6 +16,7 @@ const App = () => {
     feathersApp
       .reAuthenticate()
       .then((data) => {
+        console.log(data.user);
         dispatch(setUser(data.user));
       })
       .catch((err) => {
