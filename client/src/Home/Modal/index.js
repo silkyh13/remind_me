@@ -10,7 +10,9 @@ import {
   Box,
   Grid,
   Button,
+  Chip,
 } from "@material-ui/core";
+import FaceIcon from "@material-ui/icons/Face";
 import { selectDate, setDate } from "../../state/slices/date";
 import { toggleModal, stateOfModal } from "../../state/slices/modal";
 import { pushEvents, stateOfEvents } from "../../state/slices/events";
@@ -19,6 +21,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useStyles } from "./styles";
 import feathersApp from "../../feathers";
 import Event from "./Event";
+function validateEmail(email) {
+  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
 const DateModal = () => {
   const date = useSelector(selectDate);
   const user = useSelector(selectUser);
@@ -26,6 +33,10 @@ const DateModal = () => {
   const [endTime, setEndTime] = useState("2021-02-10T01:00");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [invitee, setInvitee] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [entered, setEntered] = useState(null);
+  const [emailAddresses, setEmailAddresses] = useState([]);
   const modalStorage = useSelector(stateOfModal);
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -69,6 +80,42 @@ const DateModal = () => {
     }
   }, [endTime]);
 
+  useEffect(() => {
+    if (modalStorage.value) {
+      setOpenModal(true);
+    } else {
+      setOpenModal(false);
+    }
+  }, [modalStorage.value]);
+  useEffect(() => {
+    let elem = document.getElementById("invite");
+
+    const listener = (event) => {
+      if (event.code === "Enter" || event.code === "NumpadEnter") {
+        setEntered(true);
+      }
+    };
+    if (elem) {
+      elem.addEventListener("keydown", listener);
+    }
+  }, [openModal]);
+
+  useEffect(() => {
+    if (entered) {
+      if (validateEmail(invitee)) {
+        setEmailAddresses([...emailAddresses, invitee]);
+        setInvitee("");
+        setEntered(null);
+      } else {
+        setEntered(false);
+      }
+    }
+  }, [entered]);
+  const handleDelete = (index) => {
+    let temp = emailAddresses;
+    emailAddresses.splice(index, 1);
+    setEmailAddresses([...emailAddresses]);
+  };
   return (
     <Modal
       className={classes.modal}
@@ -127,6 +174,31 @@ const DateModal = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
+            </Grid>
+            <Grid container item xs={12} justify="center">
+              <TextField
+                error={entered === false ? true : false}
+                className={classes.textField}
+                id="invite"
+                label="invite"
+                value={invitee}
+                onChange={(e) => setInvitee(e.target.value)}
+              />
+            </Grid>
+            <Grid container item xs={12} justify="center">
+              <Box className={classes.textField}>
+                {emailAddresses.map((data, i) => {
+                  return (
+                    <Chip
+                      label={data}
+                      onDelete={(e) => {
+                        handleDelete(i);
+                      }}
+                      icon={<FaceIcon />}
+                    />
+                  );
+                })}
+              </Box>
             </Grid>
             <Grid container item xs={12} justify="center">
               <Box width="250px" display="flex" justifyContent="flex-end">

@@ -10,7 +10,7 @@ export const useStyles = makeStyles({
   },
   modalPaper: {
     width: "50%",
-    height: "50%",
+    height: "60%",
     paddingTop: "10px",
   },
   textField: {
